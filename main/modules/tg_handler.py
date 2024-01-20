@@ -103,6 +103,7 @@ async def start_uploading(data):
         link = data["link"]
         size = data["size"]
         nyaasize = data["size"]
+        subtitle = data["subtitle"]
         name, ext = title.split(".")
 
         name += f" @animxt." + ext
@@ -130,7 +131,10 @@ async def start_uploading(data):
         duration = get_duration(file)
         durationx = get_durationx(file)
         filed = os.path.basename(file)
-        filed = filed.replace("Solo.Leveling.S01E02.If.I.Had.One.More.Chance.1080p.AMZN.WEB-DL.DDP2.0.H.264-VARYG", "Solo Leveling S01 - 02 [1080p Web-DL]")
+        filed = filed.replace(filed[-14:], ".mkv")
+        filed = filed.replace("[Erai-raws]", "")
+        filed = filed.replace("[1080p][Multiple Subtitle]", "[1080p Web-DL]")
+        filed = filed.replace("[1080p]", "[1080p Web-DL]")
         filed = filed.replace("2nd Season", "S2")
         filed = filed.replace("3rd Season", "S3")
         razo = filed.replace("[1080p Web-DL]", "[720p x265] @animxt")
@@ -140,9 +144,36 @@ async def start_uploading(data):
         ghostname = ghostname.replace("[1080p]", "")
         ghostname = ghostname.replace("2nd Season", "S2")
         ghostname = ghostname.replace("3rd Season", "S3")
-        
+        subtitle = subtitle.replace("][", ", ")
+        subtitle = subtitle.replace("[", "")
+        subtitle = subtitle.replace("]", "")     
+        subtitle = subtitle.replace("ENG", "English")
+        subtitle = subtitle.replace("POR-BR", "Portuguese (Brazil)")
+        subtitle = subtitle.replace("SPA-LA", "Spanish (Latin America)")
+        subtitle = subtitle.replace("SPA", "Spanish")
+        subtitle = subtitle.replace("ARA", "Arabic")
+        subtitle = subtitle.replace("FRE", "French")
+        subtitle = subtitle.replace("GER", "German")
+        subtitle = subtitle.replace("ITA", "Italian")
+        subtitle = subtitle.replace("RUS", "Russian")
+        subtitle = subtitle.replace("HIN", "Hindi")
+        subtitle = subtitle.replace("RUM", "Romanian")
+        subtitle = subtitle.replace("FIN", "Finnish")
+        subtitle = subtitle.replace("MAY", "Malaysian")
+        subtitle = subtitle.replace("SWE", "Swedish")
+        subtitle = subtitle.replace("GRE", "Greek")
+        subtitle = subtitle.replace("HEB", "Hebrew")
+        subtitle = subtitle.replace("1080p, 95972F57.mkv", "English")
+        subtitle = subtitle.replace("JPN", "Japanese")
+        subtitle = subtitle.replace("POL", "Polish")
+        subtitle = subtitle.replace("DUT", "Dutch")
+        subtitle = subtitle.replace("FIL", "Filipino")
+        subtitle = subtitle.replace("CES", "Czech")
+        subtitle = subtitle.replace("HRV", "Croatian")
+        subtitle = subtitle.replace("HUN", "Hungarian")
+        subtitle = subtitle.replace("UKR", "Ukranian")
         main = await app.send_photo(KAYO_ID,photo=img,caption=caption)
-        guessname = f"**{ghostname}**" + "\n" + f"__({tit})__" + "\n" + "━━━━━━━━━━━━━━━━━━━" + "\n" + "✓  `1080p x264 Web-DL`" + "\n" + f"✓  `English, Indonesian, Japanese [SDH], Malay, Thai, Vietnamese, Chinese ~ Subs`" + "\n" + "#Source #WebDL"
+        guessname = f"**{ghostname}**" + "\n" + f"__({tit})__" + "\n" + "━━━━━━━━━━━━━━━━━━━" + "\n" + "✓  `1080p x264 Web-DL`" + "\n" + f"✓  `{subtitle} ~ Subs`" + "\n" + "#Source #WebDL"
         
         thumbnail = await generate_thumbnail(id,file)
 
@@ -162,14 +193,15 @@ async def start_uploading(data):
 
             )   
         os.rename(file, fpath)
-        fid = str(videox.message_id)
+        fid = str(videox.id)
         source_link = f"https://telegram.me/somayukibot?start=animxt_{str_to_b64(fid)}"
         await asyncio.sleep(10)
         id = await is_fid_in_db(fid)
         if id:
             hash = id["code"]
             ddlx = f"https://ddl.animxt.fun/beta/{hash}"
-        api_url = f"https://nanolinks.in/api?api=7da8202d8af0c8d76c024a6be6badadaabe66a01&url={ddlx}&format=text"
+        
+        api_url = f"https://tnshort.net/api?api=fea911843f6e7bec739708f3e562b56184342089&url={ddlx}&format=text"
         result = requests.get(api_url)
         nai_text = result.text
         da_url = "https://da.gd/"
@@ -177,6 +209,7 @@ async def start_uploading(data):
         shorten_url = f"{da_url}shorten"
         response = requests.post(shorten_url, params={"url": url})
         nyaa_text = response.text.strip()
+        
         repl_markup=InlineKeyboardMarkup(
 
             [
@@ -203,8 +236,8 @@ async def start_uploading(data):
                     
             ],
         )
-        orgtext =  "**#Source_File #AMZN**" + "\n" + f"**‣ File Name: `{filed}`**" + "\n" + "**‣ Video**: `1080p x264`" + "\n" + "**‣ Audio**: `Japanese`" + "\n" + f"**‣ Subtitle**: `English, Indonesian, Japanese [SDH], Malay, Thai, Vietnamese, Chinese`" + "\n" + f"**‣ File Size**: `{nyaasize}`" + "\n" + f"**‣ Duration**: {durationx}" + "\n" + f"**‣ Downloads**: [🔗Telegram File]({source_link}) [🔗BETA DL]({nyaa_text})"
-        rep_id = int(main.message_id)
+        orgtext =  "**#Source_File**" + "\n" + f"**‣ File Name: `{filed}`**" + "\n" + "**‣ Video**: `1080p x264`" + "\n" + "**‣ Audio**: `Japanese`" + "\n" + f"**‣ Subtitle**: `{subtitle}`" + "\n" + f"**‣ File Size**: `{nyaasize}`" + "\n" + f"**‣ Duration**: {durationx}" + "\n" + f"**‣ Downloads**: [🔗Telegram File]({source_link}) [🔗BETA DL]({nyaa_text})"
+        rep_id = int(main.id)
         await asyncio.sleep(5)
         untextx = await app.send_message(
                       chat_id=KAYO_ID,
@@ -214,10 +247,9 @@ async def start_uploading(data):
         await asyncio.sleep(3)
         unitext = await untextx.edit(orgtext, reply_markup=repl_markup)
         await asyncio.sleep(5)
-        sourcetext =  f"**#Encoded_File #AMZN**" + "\n" + f"**‣ File Name**: `{razo}`" + "\n" + "**‣ Video**: `720p HEVC x265 10Bit`" + "\n" + "**‣ Audio**: `Japanese`" + "\n" + f"**‣ Subtitle**: `English, Indonesian, Japanese [SDH], Malay, Thai, Vietnamese, Chinese`"
-        untext = await app.edit_message_text(
+        sourcetext =  f"**#Encoded_File**" + "\n" + f"**‣ File Name**: `{razo}`" + "\n" + "**‣ Video**: `720p HEVC x265 10Bit`" + "\n" + "**‣ Audio**: `Japanese`" + "\n" + f"**‣ Subtitle**: `{subtitle}`"
+        untext = await app.send_message(
                       chat_id=KAYO_ID,
-                      medsage_id=39489,
                       text=sourcetext,
                       reply_to_message_id=rep_id
                   )
@@ -227,7 +259,7 @@ async def start_uploading(data):
         await asyncio.sleep(5)
         compressed = await compress_video(duration,untext,name,sourcetext)
         
-        dingdong = await app.edit_message_text(chat_id=-1001159872623, message_id=39489, text=sourcetext)
+        dingdong = await untext.edit(sourcetext)
 
 
         if compressed == "None" or compressed == None:
@@ -243,7 +275,7 @@ async def start_uploading(data):
         print("Uploading --> ",name)
 
         await status.edit(await status_text(f"Uploading {name }"),reply_markup=button1)
-        video = await upload_video(msg,fpath,id,tit,name,size,sourcetext,untext,nyaasize,thumbnail) 
+        video = await upload_video(msg,fpath,id,tit,name,size,sourcetext,untext,subtitle,nyaasize,thumbnail) 
         try:
 
             os.remove("video.mkv")
