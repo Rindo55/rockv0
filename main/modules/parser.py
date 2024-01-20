@@ -1,4 +1,6 @@
 import asyncio
+from main.modules.schedule import update_schedule
+from main.modules.usschedule import update_schedulex
 from main.modules.utils import status_text
 from main import status
 from main.modules.db import get_animesdb, get_uploads, save_animedb
@@ -7,6 +9,7 @@ from main import queue
 from main.inline import button1
 
 def trim_title(title: str):
+    title = title.rsplit(' ', 1)[0]
     title = title.replace("[Erai-raws] ", "")
     title = title.replace("Dr. Stone - New World Cour 2", "Dr Stone New World Part 2")
     title = title.replace("Mahou Tsukai no Yome Season 2 Cour 2", "Mahou Tsukai no Yome Season 2 Part 2")
@@ -14,7 +17,7 @@ def trim_title(title: str):
     title = title.replace("Shangri-La Frontier - Kusogee Hunter, Kamige ni Idoman to Su", "Shangri-La Frontier")
     title = title.replace("Hataraku Maou-sama!! Part 2", "The Devil is a Part-Timer! S2 Part 2")
     title = title.replace("Tian Guan Ci Fu Di Er Ji", "Heaven Official's Blessing S2")
-    title = title.replace("Solo Leveling S01E02 If I Had One More Chance 1080p AMZN WEB-DL DDP2.0 H 264-VARYG (Ore dake Level Up na Ken, Multi-Subs)", "Solo Leveling - 02")
+    title = title.replace("Me-gumi no Daigo - Kyuukoku no Orange", "Megumi no Daigo - Kyuukoku no Orange")
     ext = ".mkv"
     title = title + ext
     return title
@@ -24,14 +27,15 @@ def multi_sub(title: str):
     return subtitle
 
 def parse():
-    a = feedparser.parse("https://nyaa.si/?page=rss&u=varyg1001&q=solo%20leveling")
+    a = feedparser.parse("https://siftrss.com/f/oyebWJBqN8")
     b = a["entries"]
-    b = b[0:1]
+    b = b[0:14]
     data = []    
 
     for i in b:
         item = {}
         item['title'] = trim_title(i['title'])
+        item['subtitle'] = multi_sub(i['title'])
         item['size'] = i['nyaa_size']   
         item['link'] = "magnet:?xt=urn:btih:" + i['nyaa_infohash']
         data.append(item)
@@ -75,4 +79,4 @@ async def auto_parser():
         except:
             pass
 
-        await asyncio.sleep(60)
+        await asyncio.sleep(30)
