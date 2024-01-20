@@ -39,7 +39,7 @@ def parse():
         item['size'] = i['nyaa_size']   
         item['link'] = "magnet:?xt=urn:btih:" + i['nyaa_infohash']
         data.append(item)
-
+    data.reverse()
     return data
 
 async def auto_parser():
