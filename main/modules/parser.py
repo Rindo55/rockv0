@@ -29,7 +29,7 @@ def multi_sub(title: str):
 def parse():
     a = feedparser.parse("https://siftrss.com/f/oyebWJBqN8")
     b = a["entries"]
-    b = b[8:0]
+    b = b[0:8]
     data = []    
 
     for i in b:
@@ -39,7 +39,7 @@ def parse():
         item['size'] = i['nyaa_size']   
         item['link'] = "magnet:?xt=urn:btih:" + i['nyaa_infohash']
         data.append(item)
-    data.reverse()
+
     return data
 
 async def auto_parser():
