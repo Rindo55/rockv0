@@ -42,7 +42,7 @@ from pyrogram.errors import FloodWait
 
 from main.inline import button1
 
-async def upload_video(msg: Message,file,id,tit,name,ttl,sourcetext,untext,nyaasize,thumbnail):
+async def upload_video(msg: Message,file,id,tit,name,ttl,sourcetext,untext,subtitle,nyaasize,thumbnail):
 
     try:
 
@@ -75,7 +75,7 @@ async def upload_video(msg: Message,file,id,tit,name,ttl,sourcetext,untext,nyaas
 
             caption = caption.replace("[720p x265] @animxt.mkv", "") 
 
-            gcaption=f"**{caption}**" + "\n" +  f"__({tit})__" + "\n" + "━━━━━━━━━━━━━━━━━━━" + "\n" + "✓  `720p x265 10Bit`" + "\n" + f"✓  `English, Indonesian, Japanese [SDH], Malay, Thai, Vietnamese, Chinese ~ Subs`" + "\n" + "#Encoded #HEVC"
+            gcaption=f"**{caption}**" + "\n" +  f"__({tit})__" + "\n" + "━━━━━━━━━━━━━━━━━━━" + "\n" + "✓  `720p x265 10Bit`" + "\n" + f"✓  `{subtitle} ~ Subs`" + "\n" + "#Encoded #HEVC"
 
             kayo_id = -1001642923224
 
@@ -100,7 +100,7 @@ async def upload_video(msg: Message,file,id,tit,name,ttl,sourcetext,untext,nyaas
             os.rename(file,fukpath)
             
  
-            fid = str(x.message_id)
+            fid = str(x.id)
             da_url = "https://da.gd/"
             teleshare = f"https://telegram.me/somayukibot?start=animxt_{str_to_b64(fid)}"
         
@@ -108,16 +108,17 @@ async def upload_video(msg: Message,file,id,tit,name,ttl,sourcetext,untext,nyaas
             id = await is_fid_in_db(fid) 
             if id:
                 hash = id["code"]
-                ddl = f"https://ddl.animxt.fun/beta/{hash}"
-            api_url = f"https://nanolinks.in/api?api=7da8202d8af0c8d76c024a6be6badadaabe66a01&url={ddlx}&format=text"
-            print(ddl)
+                ddlx = f"https://ddl.animxt.fun/beta/{hash}"
+            
+            api_url = f"https://tnshort.net/api?api=fea911843f6e7bec739708f3e562b56184342089&url={ddlx}&format=text"
             result = requests.get(api_url)
             nai_text = result.text
-   
+            da_url = "https://da.gd/"
             url = nai_text
             shorten_url = f"{da_url}shorten"
             response = requests.post(shorten_url, params={"url": url})
             nyaa_text = response.text.strip()
+                          
             repl_markup=InlineKeyboardMarkup(
 
                 [
@@ -149,7 +150,7 @@ async def upload_video(msg: Message,file,id,tit,name,ttl,sourcetext,untext,nyaas
 
             await asyncio.sleep(5)
 
-            entext = await app.edit_message_text(chat_id=-100115987262, message_id=39489, text=encodetext, disable_web_page_preview=True, reply_markup=repl_markup)
+            entext = await untext.edit(encodetext, disable_web_page_preview=True, reply_markup=repl_markup)
 
     except Exception:
 
